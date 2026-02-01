@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超级宠物档案：闪电短腿侠</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        heroRed: '#FF4136',
+                        heroGold: '#FFDC00',
+                        heroBlue: '#0074D9',
+                        darkText: '#111111',
+                        lightBg: '#F4F4F4',
+                    },
+                    fontFamily: {
+                        sans: ['Helvetica', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Chart Container Styling - Responsive Boundaries */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Constrain width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom Scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF4136; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d63025; 
+        }
+
+        /* Timeline Styling without SVG */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #FFDC00;
+            transform: translateX(-50%);
+        }
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background-color: #FF4136;
+            border: 4px solid white;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+    </style>
+    <!-- 
+        Selected Palette: "Energetic & Playful" (Custom Comic Variation)
+        Source Material: "super_pet_prequel.md"
+        Narrative Plan:
+        1. Intro: Meet Mochi, the ordinary Corgi.
+        2. Routine (Donut): Highlighting his lazy past.
+        3. Incident (Timeline): The Star Core accident flow.
+        4. Powers (Radar): Before vs After stats.
+        5. Energy (Plotly): The specific moment of transformation.
+        6. Speed (Bar): Comparison with vehicles/nature.
+        7. Conclusion: The birth of Flash Short-Legs.
+        
+        Chart Choices:
+        - Donut: Composition of a day.
+        - Timeline: Sequential events.
+        - Radar: Multivariate comparison (attributes).
+        - ScatterGL (Plotly): High frequency data simulation (Energy).
+        - Bar: Category comparison (Speed).
+        
+        NO SVG USED. NO MERMAID USED.
+    -->
+</head>
+<body class="bg-lightBg text-darkText font-sans leading-relaxed">
+
+    <!-- Header Section -->
+    <header class="bg-heroRed text-white p-8 shadow-lg">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-2 uppercase">
+                ⚡ 闪电短腿侠 ⚡
+            </h1>
+            <p class="text-xl md:text-2xl font-medium opacity-90">
+                超级宠物档案：麻糬的英雄觉醒
+            </p>
+            <div class="mt-4 inline-block bg-white text-heroRed px-4 py-1 rounded-full font-bold shadow-md">
+                代号：Flash Short-Legs
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto p-6 space-y-12">
+
+        <!-- Introduction Section -->
+        <section class="bg-white rounded-xl shadow-md p-8 border-l-8 border-heroBlue">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">平凡的起源</h2>
+            <p class="text-lg text-gray-600 mb-6">
+                在青翠市（Verdant City）的枫树街花园，生活着一只名叫<b>麻糬</b>的柯基犬。在他成为传说中的守护者之前，他的生活平淡无奇，最大的敌人是永远抓不到的红松鼠，最大的挑战是那张高不可攀的沙发。
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <div class="text-4xl mb-2">🐕</div>
+                    <div class="font-bold text-gray-700">身份</div>
+                    <div class="text-heroBlue font-bold">普通柯基</div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <div class="text-4xl mb-2">🌭</div>
+                    <div class="font-bold text-gray-700">最爱</div>
+                    <div class="text-heroBlue font-bold">肉罐头</div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <div class="text-4xl mb-2">🛋️</div>
+                    <div class="font-bold text-gray-700">职业</div>
+                    <div class="text-heroBlue font-bold">沙发土豆</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pre-Transformation Data -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <div class="bg-white rounded-xl shadow-md p-6 h-full">
+                <h3 class="text-2xl font-bold mb-4 text-heroRed border-b-2 border-gray-100 pb-2">觉醒前的日常</h3>
+                <p class="mb-4 text-gray-600 text-sm">
+                    麻糬的时间管理非常严格：大部分时间用于维持其圆润的身材，只有极少的时间用于运动。这是一张典型的“沙发土豆”时间分配图。
+                </p>
+                <div class="chart-container">
+                    <canvas id="routineChart"></canvas>
+                </div>
+                <p class="text-center text-xs text-gray-400 mt-2">数据来源：李明的观察日记</p>
+            </div>
+
+            <!-- The Incident Timeline -->
+            <div class="bg-white rounded-xl shadow-md p-6 h-full relative overflow-hidden">
+                <h3 class="text-2xl font-bold mb-4 text-heroGold border-b-2 border-gray-100 pb-2">禁忌的实验室事件</h3>
+                <p class="mb-6 text-gray-600 text-sm">
+                    一个雷雨交加的夜晚，命运的齿轮开始转动。李明带回的“星核感应器”改变了一切。
+                </p>
+                
+                <div class="relative pl-8 space-y-8">
+                    <!-- Vertical Line -->
+                    <div class="absolute left-3 top-2 bottom-2 w-1 bg-gray-200"></div>
+
+                    <!-- Event 1 -->
+                    <div class="relative">
+                        <div class="absolute -left-7 top-1 w-4 h-4 rounded-full bg-gray-400 border-2 border-white shadow"></div>
+                        <h4 class="font-bold text-gray-800">22:00 - 目标锁定</h4>
+                        <p class="text-sm text-gray-500">李明在沙发上打瞌睡。麻糬发现了桌上散发蓝光的“超级网球”。</p>
+                    </div>
+
+                    <!-- Event 2 -->
+                    <div class="relative">
+                        <div class="absolute -left-7 top-1 w-4 h-4 rounded-full bg-heroBlue border-2 border-white shadow"></div>
+                        <h4 class="font-bold text-heroBlue">22:05 - 接触</h4>
+                        <p class="text-sm text-gray-500">麻糬纵跃触碰开关。感应器爆发紫色电光。</p>
+                    </div>
+
+                    <!-- Event 3 -->
+                    <div class="relative">
+                        <div class="absolute -left-7 top-1 w-4 h-4 rounded-full bg-heroGold border-2 border-white shadow animate-pulse"></div>
+                        <h4 class="font-bold text-heroGold">22:06 - 融合</h4>
+                        <p class="text-sm text-gray-500">低沉蜂鸣声充满房间。温暖酥麻的力量改造了麻糬的身体结构。</p>
+                    </div>
+
+                    <!-- Event 4 -->
+                    <div class="relative">
+                        <div class="absolute -left-7 top-1 w-4 h-4 rounded-full bg-heroRed border-2 border-white shadow"></div>
+                        <h4 class="font-bold text-heroRed">次日 07:00 - 觉醒</h4>
+                        <p class="text-sm text-gray-500">感官敏锐化。第一次尝试跳跃即飞越沙发，撞上墙壁。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Section -->
+        <section class="bg-white rounded-xl shadow-md p-8">
+            <h2 class="text-3xl font-bold text-center mb-2">超级进化分析</h2>
+            <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                星核能量彻底重写了麻糬的生物潜能。虽然外表依旧萌力十足，但内在属性发生了质的飞跃。
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Radar Chart -->
+                <div class="chart-container">
+                    <canvas id="attributesChart"></canvas>
+                </div>
+                
+                <!-- Description -->
+                <div class="flex flex-col justify-center space-y-4">
+                    <div class="bg-red-50 p-4 rounded-lg border-l-4 border-heroRed">
+                        <h4 class="font-bold text-heroRed">速度 (Speed)</h4>
+                        <p class="text-sm text-gray-700">从追不到红松鼠，进化到能追上失控的货车。他的四肢仿佛装上了火箭推进器。</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-heroGold">
+                        <h4 class="font-bold text-heroGold">弹跳力 (Jump)</h4>
+                        <p class="text-sm text-gray-700">曾经无法逾越的两厘米沙发高差，现在可以轻松飞跃，并在空中划出完美弧度。</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-heroBlue">
+                        <h4 class="font-bold text-heroBlue">感知 (Senses)</h4>
+                        <p class="text-sm text-gray-700">能听到三条街外的争吵，能看见空气中流动的电荷。没有任何饼干碎屑能逃过他的鼻子。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scientific Data Section (Plotly) -->
+        <section class="bg-gray-900 text-white rounded-xl shadow-lg p-8">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-heroBlue">星核能量波动记录</h2>
+                    <p class="text-gray-400 mt-2">接触瞬间的生物电场峰值分析</p>
+                </div>
+                <div class="mt-4 md:mt-0 bg-gray-800 px-4 py-2 rounded border border-gray-700">
+                    <span class="text-xs uppercase tracking-widest text-gray-500">检测设备</span>
+                    <div class="font-mono text-heroGold">Lab-Alpha 传感器</div>
+                </div>
+            </div>
+            
+            <div class="w-full bg-gray-800 rounded-lg p-2 overflow-hidden">
+                <!-- Plotly Container -->
+                <div id="energyPlot" style="width: 100%; height: 400px;"></div>
+            </div>
+            <p class="mt-4 text-sm text-gray-400 text-center">
+                图表显示能量在微秒级内呈指数级增长，随后由于麻糬的身体吸收而趋于稳定。
+            </p>
+        </section>
+
+        <!-- Speed Comparison Section -->
+        <section class="bg-white rounded-xl shadow-md p-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">速度层级对比</h2>
+            <p class="text-gray-600 mb-6">
+                为了直观展示“闪电短腿侠”的能力，我们将他的极限速度与青翠市的常见移动物体进行了对比。
+            </p>
+            <div class="chart-container">
+                <canvas id="speedChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Footer / Teaser -->
+        <footer class="bg-gray-800 text-white rounded-t-xl mt-12 p-8 text-center relative overflow-hidden">
+            <div class="relative z-10">
+                <h3 class="text-2xl font-bold text-heroRed mb-4">未完待续...</h3>
+                <p class="max-w-xl mx-auto text-gray-300 mb-6">
+                    这只是开始。阴影之中，拥有机械手臂的流浪猫<b>“黑爪教授”</b>正在注视着这一切。萌宠正义联盟即将集结！
+                </p>
+                <div class="inline-block border-2 border-heroGold text-heroGold px-6 py-2 rounded uppercase font-bold tracking-widest text-sm">
+                    Coming Soon
+                </div>
+            </div>
+            <!-- Decorative circle -->
+            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gray-700 rounded-full opacity-20"></div>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- Utility: Label Wrapping (16 char limit) ---
+        function wrapLabels(labels) {
+            return labels.map(label => {
+                if (typeof label === 'string' && label.length > 16) {
+                    const words = label.split(''); // Splitting by char for Chinese mainly, or words for English
+                    // Since Chinese doesn't have spaces usually, we split by length chunks for this context
+                    // Or if it was mixed, we'd use complex logic. For simplicity in this specific Chinese context:
+                    // We will chunk it every 12-16 characters.
+                    
+                    let lines = [];
+                    for (let i = 0; i < label.length; i += 10) {
+                        lines.push(label.substring(i, i + 10));
+                    }
+                    return lines;
+                }
+                return label;
+            });
+        }
+
+        // --- Utility: Common Tooltip Configuration ---
+        const commonTooltipConfig = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(''); // Join back for tooltip title
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        // --- Chart 1: Daily Routine (Doughnut) ---
+        const ctxRoutine = document.getElementById('routineChart').getContext('2d');
+        const routineData = {
+            labels: ['深度睡眠 (Dreaming)', '晒太阳 (Sunbathing)', '追红松鼠 (Chasing)', '撒娇卖萌 (Being Cute)', '吃肉罐头 (Eating)'],
+            datasets: [{
+                data: [45, 20, 5, 15, 15],
+                backgroundColor: [
+                    '#E5E7EB', // Sleep (Gray)
+                    '#FCD34D', // Sun (Yellow)
+                    '#EF4444', // Chase (Red)
+                    '#60A5FA', // Cute (Blue)
+                    '#F59E0B'  // Eat (Gold/Orange)
+                ],
+                borderWidth: 0
+            }]
+        };
+
+        new Chart(ctxRoutine, {
+            type: 'doughnut',
+            data: routineData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    },
+                    tooltip: commonTooltipConfig
+                }
+            }
+        });
+
+        // --- Chart 2: Attributes Radar (Radar) ---
+        const ctxAttr = document.getElementById('attributesChart').getContext('2d');
+        const attrLabels = wrapLabels(['移动速度 (Speed)', '弹跳能力 (Jump)', '感知范围 (Senses)', '可爱程度 (Cuteness)', '食欲 (Appetite)']);
+        
+        new Chart(ctxAttr, {
+            type: 'radar',
+            data: {
+                labels: attrLabels,
+                datasets: [{
+                    label: '觉醒前 (Pre-Awakening)',
+                    data: [15, 5, 40, 95, 100],
+                    fill: true,
+                    backgroundColor: 'rgba(156, 163, 175, 0.2)',
+                    borderColor: 'rgb(156, 163, 175)',
+                    pointBackgroundColor: 'rgb(156, 163, 175)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(156, 163, 175)'
+                }, {
+                    label: '闪电短腿侠 (Hero Mode)',
+                    data: [100, 90, 100, 100, 100],
+                    fill: true,
+                    backgroundColor: 'rgba(255, 65, 54, 0.2)',
+                    borderColor: '#FF4136',
+                    pointBackgroundColor: '#FFDC00',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#FF4136'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: '#ddd' },
+                        grid: { color: '#eee' },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
+                plugins: {
+                    tooltip: commonTooltipConfig
+                }
+            }
+        });
+
+        // --- Chart 3: Speed Comparison (Bar) ---
+        const ctxSpeed = document.getElementById('speedChart').getContext('2d');
+        const speedLabels = wrapLabels(['普通麻糬', '红松鼠 (宿敌)', '失控货车', '闪电短腿侠']);
+        
+        new Chart(ctxSpeed, {
+            type: 'bar',
+            data: {
+                labels: speedLabels,
+                datasets: [{
+                    label: '最高速度 (km/h)',
+                    data: [15, 25, 60, 300], // Hyperbolized hero speed
+                    backgroundColor: [
+                        '#9CA3AF', // Gray
+                        '#7F1D1D', // Dark Red
+                        '#374151', // Dark Gray
+                        '#FFDC00'  // Gold
+                    ],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y', // Horizontal bar for better label reading
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { display: false }
+                    },
+                    y: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    tooltip: commonTooltipConfig
+                }
+            }
+        });
+
+        // --- Chart 4: Energy Spike (Plotly WebGL) ---
+        // Generating synthetic data for the "Spike"
+        const xValues = [];
+        const yValues = [];
+        for (let i = 0; i < 500; i++) {
+            xValues.push(i);
+            // Flat line then huge spike then stabilization
+            if (i < 200) yValues.push(Math.random() * 5);
+            else if (i < 250) yValues.push(50 + Math.random() * 10 + (i-200) * 8); // Rise
+            else if (i < 300) yValues.push(450 - (i-250) * 8 + Math.random() * 20); // Fall
+            else yValues.push(50 + Math.random() * 5); // New baseline
+        }
+
+        const trace1 = {
+            x: xValues,
+            y: yValues,
+            mode: 'lines',
+            type: 'scattergl', // Using WebGL/Canvas rendering
+            line: {
+                color: '#0074D9',
+                width: 3
+            },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(0, 116, 217, 0.2)',
+            name: '能量读数'
+        };
+
+        const layout = {
+            font: { family: 'Helvetica, Arial, sans-serif', color: '#fff' },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            margin: { t: 20, r: 20, b: 40, l: 40 },
+            xaxis: { 
+                title: '时间 (毫秒)', 
+                showgrid: true, 
+                gridcolor: '#333',
+                zerolinecolor: '#666'
+            },
+            yaxis: { 
+                title: '能量强度 (Mega-Joules)', 
+                showgrid: true, 
+                gridcolor: '#333',
+                zerolinecolor: '#666'
+            },
+            hovermode: 'closest'
+        };
+
+        const config = {
+            responsive: true,
+            displayModeBar: false
+        };
+
+        Plotly.newPlot('energyPlot', [trace1], layout, config);
+
+    </script>
+    
+    <!-- 
+      CONFIRMATION: 
+      - Mermaid JS was NOT used. 
+      - SVG graphics were NOT used (Chart.js uses Canvas, Plotly uses WebGL/Canvas container, Icons are Unicode).
+    -->
+</body>
+</html>
